@@ -21,6 +21,7 @@ coord_id = 0
 pre_id = -1
 text_id = -1
 config_constant = 0
+show_judge = True
 
 
 # 今天来个支线任务，小小整个迫击炮测距插件吧，首先想想理想的使用效果。
@@ -29,7 +30,7 @@ config_constant = 0
 # 再实现确认功能，分两种，一种是配置，一种是测量
 # 配置得按两次加号，测量固定一个点之后就不用按了
 # 先实现配置功能
-
+# 下一步实现退出功能，这里，一共有两个退出节点，一是退出到常数不为0，但id为0，即输入迫击炮位置，二是常数为0，三是退出程序
 
 # 获取屏幕尺寸
 screen_width, screen_height = pyautogui.size()
@@ -61,24 +62,54 @@ def on_press(key):
     if key == Key.alt_l:
         key_press = True
     if hasattr(key, 'char') and key.char == '+':
-        if coord_id == 0:  #这部分完成第一个点的输入，同时为了时刻显示图像，将pre_id设为初始值
-            pre_id = -1
-            coord[0] = temp_coord
-            coord_id = 1
-            if config_constant == 0:
-                canvas.itemconfig(text_id,text = "配置点1输入完成，输入配置点2")
-            else:
-                canvas.itemconfig(text_id, text="迫击炮位置输入完成，输入目标位置")
-        else:  #这部分是第二个点的工作,有两种,第二种搬到鼠标点击里实现了，这样可以实时
-            if config_constant == 0:
-                coord[1] = temp_coord
-                config_constant =round(math.sqrt((coord[0].x-coord[1].x)**2+(coord[0].y-coord[1].y)**2))
-                canvas.delete("all")
+        if temp_coord.x ==0 and temp_coord.y ==0:
+            canvas.itemconfig(text_id, text="你确定你点出红点了？")
+        else:
+            if coord_id == 0:  #这部分完成第一个点的输入，同时为了时刻显示图像，将pre_id设为初始值
+                pre_id = -1
+                coord[0] = temp_coord
+                temp_coord = Coord(0, 0)
+                coord_id = 1
                 if config_constant == 0:
-                    draw_text(screen_width-300,30,"配置失败，点距离太小了")
+                    canvas.itemconfig(text_id,text = "配置点1输入完成，输入配置点2")
                 else:
-                    draw_text(screen_width - 300, 30, "配置成功，输入迫击炮位置")
+                    canvas.itemconfig(text_id, text="迫击炮位置输入完成，输入目标位置")
+            else:  #这部分是第二个点的工作,有两种,第二种搬到鼠标点击里实现了，这样可以实时
+                if config_constant == 0:
+                    coord[1] = temp_coord
+                    temp_coord = Coord(0, 0)
+                    config_constant =round(math.sqrt((coord[0].x-coord[1].x)**2+(coord[0].y-coord[1].y)**2))
+                    canvas.delete("all")
+                    if config_constant == 0:
+                        draw_text(screen_width-300,30,"配置失败，点距离太小了")
+                    else:
+                        draw_text(screen_width - 300, 30, "配置成功，输入迫击炮位置")
+                    coord_id = 0
+    if hasattr(key, 'char') and key.char == '-':
+        if config_constant == 0:
+            if key_press:
+                exit_all()
+            else:
+                canvas.itemconfig(text_id, text="退出程序按alt和-")
+            # todo
+            # 这里应该是退出程序，先不写了
+        else:
+            if coord_id == 0:
+                config_constant = 0
+                canvas.delete("all")
+                draw_text(screen_width-300,30,"输入配置点1")
+            else:
                 coord_id = 0
+                canvas.delete("all")
+                draw_text(screen_width - 300, 30, "配置成功，输入迫击炮位置")
+    if hasattr(key, 'char') and key.char == '*':
+        global show_judge
+        if show_judge:
+            root.withdraw()
+            show_judge = False
+        else:
+            root.deiconify()
+            show_judge = True
 
 def on_release(key):
     if key == Key.alt_l:
@@ -97,11 +128,15 @@ def on_mouse_click(x, y, button, pressed):
         if coord_id == 1 and config_constant != 0:
             coord[1] = temp_coord
             temp_length = round(
-                math.sqrt((coord[0].x - coord[1].x) ** 2 + (coord[0].y - coord[1].y) ** 2)) * 100 / config_constant
-            print(temp_length)
+                math.sqrt((coord[0].x - coord[1].x) ** 2 + (coord[0].y - coord[1].y) ** 2)) * 1000 / config_constant
             canvas.itemconfig(text_id, text=f"距离为{temp_length}")
 
-
+def exit_all():
+    global keyboard_listener,mouse_listener,root
+    keyboard_listener.stop()
+    mouse_listener.stop()
+    root.destroy()
+    exit()
 
 # 启动监听
 keyboard_listener = keyboard.Listener(on_press = on_press,on_release=on_release)
