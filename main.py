@@ -43,6 +43,11 @@ root.attributes("-transparentcolor", "white")  # 设置白色为透明色
 root.attributes("-fullscreen", True)  # 全屏显示
 root.overrideredirect(True)  # 隐藏窗口边框
 
+# 获取窗口句柄
+hwnd = ctypes.windll.user32.GetForegroundWindow()
+
+# 提升窗口优先级
+ctypes.windll.user32.SetWindowPos(hwnd, -1, 0, 0, 0, 0, 3)
 # 创建画布
 canvas = tk.Canvas(root, width=screen_width, height=screen_height, bg="white", highlightthickness=0)
 canvas.pack()
