@@ -91,8 +91,7 @@ def on_press(key):
                 exit_all()
             else:
                 canvas.itemconfig(text_id, text="退出程序按alt和-")
-            # todo
-            # 这里应该是退出程序，先不写了
+
         else:
             if coord_id == 0:
                 config_constant = 0
