@@ -12,8 +12,6 @@ class Coord:
     x: int
     y: int
 
-
-#注意，这个dataclass用法有点神奇，一个Coord会新建一个类，如果把coord赋值为temp，temp的属性改了，coord一起变，因此coord也要新建
 key_press = False
 temp_coord = Coord(0,0)
 coord = [Coord(0,0),Coord(0,0)]
@@ -23,14 +21,6 @@ text_id = -1
 config_constant = 0
 show_judge = True
 
-
-# 今天来个支线任务，小小整个迫击炮测距插件吧，首先想想理想的使用效果。
-# 运行程序后，按住alt再按鼠标可以标点，每次只有一个点可以标，按+确定，
-# 这样进行实现，首先实现每次只有 一个点动的功能
-# 再实现确认功能，分两种，一种是配置，一种是测量
-# 配置得按两次加号，测量固定一个点之后就不用按了
-# 先实现配置功能
-# 下一步实现退出功能，这里，一共有两个退出节点，一是退出到常数不为0，但id为0，即输入迫击炮位置，二是常数为0，三是退出程序
 
 # 获取屏幕尺寸
 screen_width, screen_height = pyautogui.size()
@@ -43,11 +33,7 @@ root.attributes("-transparentcolor", "white")  # 设置白色为透明色
 root.attributes("-fullscreen", True)  # 全屏显示
 root.overrideredirect(True)  # 隐藏窗口边框
 
-# 获取窗口句柄
-hwnd = ctypes.windll.user32.GetForegroundWindow()
 
-# 提升窗口优先级
-ctypes.windll.user32.SetWindowPos(hwnd, -1, 0, 0, 0, 0, 3)
 # 创建画布
 canvas = tk.Canvas(root, width=screen_width, height=screen_height, bg="white", highlightthickness=0)
 canvas.pack()
