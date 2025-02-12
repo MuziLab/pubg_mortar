@@ -29,14 +29,14 @@ screen_width, screen_height = pyautogui.size()
 # 创建主窗口
 root = tk.Tk()
 root.attributes("-topmost", True)  # 窗口置顶
-root.attributes("-transparentcolor", "white")  # 设置白色为透明色
+root.attributes("-alpha",0.5)  # 设置窗口透明
 root.attributes("-fullscreen", True)  # 全屏显示
 root.overrideredirect(True)  # 隐藏窗口边框
-
+root.wm_attributes("-disabled", False)  # 允许窗口拦截事件
 
 # 创建画布
 canvas = tk.Canvas(root, width=screen_width, height=screen_height, bg="white", highlightthickness=0)
-canvas.pack()
+canvas.place(relwidth=1, relheight=1)
 
 # 在屏幕上画点
 def draw_point(x, y):
