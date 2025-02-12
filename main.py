@@ -105,8 +105,6 @@ def on_release(key):
     if key == Key.alt_l:
         global  key_press
         key_press = False
-    if key == keyboard.Key.esc:  # 按下 Esc 键退出监听
-        return False
 
 def on_mouse_click(x, y, button, pressed):
     global key_press
@@ -127,7 +125,6 @@ def exit_all():
     mouse_listener.stop()
     root.destroy()
     exit()
-
 # 启动监听
 keyboard_listener = keyboard.Listener(on_press = on_press,on_release=on_release)
 keyboard_listener.start()
